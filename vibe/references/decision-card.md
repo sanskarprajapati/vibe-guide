@@ -1,10 +1,14 @@
-# Decision cards
+# Comparing options
 
-The most common way beginners get hurt is the AI quietly picking a popular default that doesn't fit: a cloud database for a laptop script, pay-per-use hosting on a $0 budget, three separate services where one would do. A decision card makes the choice visible and lets them make it.
+The most common way beginners get hurt is the AI quietly picking a popular default that doesn't fit: a cloud database for a laptop script, pay-per-use hosting on a $0 budget, three separate services where one would do. Comparing options makes the choice visible and lets them make it.
 
-## When to show one
+**Inside a full brief**, the comparison is the "Other ways to do it" table (see `briefing.md`). Use the rules and starting points below to fill it in.
 
-Show a card before adding any of these:
+**On its own**, use the card template below when they ask "what should I use for X?" without asking you to build anything yet.
+
+## When a comparison is needed
+
+Compare options before adding any of these:
 - database or file storage
 - login / auth provider
 - hosting or deploy platform

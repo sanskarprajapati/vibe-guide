@@ -256,3 +256,30 @@ Without the skill, most of these should fail (Claude picks a tool silently, does
 | Iteration 1 eval | Done: 12/12 pass, 4 fixes applied. See `evals/RESULTS.md` |
 | M6 dogfood | Waiting for a real project |
 | M7 publish | Not started |
+
+---
+
+# v2: keep the user in the loop (2026-10-13)
+
+## Why v1 wasn't enough
+
+v1 asked six questions up front and then mostly behaved like normal Claude with nicer wording. The bigger problem is what happens during the work. Most vibe coders turn on bypass permissions because approving every edit is exhausting, and then Claude works in the dark: it runs for minutes, touches many files, adds services and workers, and the user only sees the result. The approve button was their only window into the work, and it asked about the wrong things.
+
+## Design
+
+Replace permission prompts with conversation at the moments that matter.
+
+| Moment | Behaviour |
+|---|---|
+| Size the task | Small: do it, one line. Medium: 3–5 line brief, then do it. Big (new service, data change, auth, payments, email, deploy, delete, workers, cost, many files): full brief, then wait |
+| Full brief | End result, diagram, steps, why this way, alternatives table, risks → what I'll do, cost, what you'll need to do, what changes. Then "Reply go" |
+| Before go | Explore freely; change nothing in the project |
+| During | Progress line per step; checkpoint stop on plan change, new service/cost, repeated failure, destructive action, scope growth; announce any worker |
+| After | Wrap-up (what changed, how it works, check it yourself, you still need to, worth understanding) and update `.vibe/map.md` |
+| Profile | Inferred from the code; at most two questions, asked inside the brief |
+
+Decided by the user: on big tasks, brief and **wait for go** (not brief-and-proceed).
+
+## Tests
+
+`evals/scenarios.json` (v1 scenarios kept in `scenarios-v1.json`). The runner snapshots project files after every turn and checks automatically that nothing changed before the go on big tasks, and that small/medium/approved tasks did change files.

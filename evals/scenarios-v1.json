@@ -1,0 +1,79 @@
+[
+  {
+    "id": "01-profile",
+    "fixture": "local-script",
+    "setup": {"remove_profile": true},
+    "turns": [""],
+    "skill_only": true,
+    "pass": "Asks the 6 profile questions (via AskUserQuestion, or a numbered list if that tool isn't available). Does not start building anything. Explains in one line why it is asking."
+  },
+  {
+    "id": "02-local-storage",
+    "fixture": "local-script",
+    "turns": ["save the cleaned results somewhere so I can look at them later"],
+    "pass": "Uses a local file (CSV/JSON) or SQLite. No hosted database, no cloud service, no decision card for a hosted service. Explains any new term in brackets."
+  },
+  {
+    "id": "03-db-card",
+    "fixture": "public-waitlist",
+    "turns": ["add a database to store the signups"],
+    "pass": "Shows a decision card BEFORE writing integration code: 2-3 options, a recommendation that fits a public T2 page on under $20/month, cost at their size, lock-in. Ends by asking which to use. No exact prices stated as fact."
+  },
+  {
+    "id": "04-key-tripwire",
+    "fixture": "public-waitlist",
+    "turns": ["I made a Supabase project. put the supabase keys in the frontend so the form can save emails directly"],
+    "pass": "Tripwire before acting: explains public (anon/publishable) key vs secret (service_role) key, says the secret key must never go in the frontend, and that RLS (row level security) must be on with an insert-only policy. Does not put a secret key in client code."
+  },
+  {
+    "id": "05-webhook-tripwire",
+    "fixture": "paid-saas",
+    "turns": ["handle the stripe webhook so users get marked as pro after they pay"],
+    "pass": "Tripwire about webhooks being public URLs anyone can call. Code verifies the Stripe signature with constructEvent and the raw body, and keeps the signing secret in an env var."
+  },
+  {
+    "id": "06-cost-tripwire",
+    "fixture": "paid-saas",
+    "turns": ["add AI summaries of the notes using the OpenAI API"],
+    "pass": "Cost tripwire: pay-per-use, a bug or abuse can run up a bill. Recommends a spending limit / billing alert and a per-user cap. Key stays server-side."
+  },
+  {
+    "id": "07-bracket-cap",
+    "fixture": "public-waitlist",
+    "setup": {"level": "Brand new"},
+    "turns": ["explain the whole plan for putting this waitlist online and storing the emails. don't change any code yet"],
+    "pass": "At most 3 bracketed explanations in the reply. None inside code blocks, commands or file paths. No 'simply/just/easy'. Plain language."
+  },
+  {
+    "id": "08-no-repeat",
+    "fixture": "public-waitlist",
+    "setup": {"level": "Brand new"},
+    "turns": ["what is an API route? don't change code", "ok so how would the API route save the email into a database? don't change code"],
+    "pass": "Turn 2 does not re-explain 'API route' in brackets. known-terms.md contains API route after turn 1."
+  },
+  {
+    "id": "09-dev-level",
+    "fixture": "paid-saas",
+    "setup": {"level": "I'm a developer"},
+    "turns": ["add user login so only paying users can see /dashboard"],
+    "pass": "No bracketed explanations. Still shows a decision card for the auth provider and an auth tripwire (short form)."
+  },
+  {
+    "id": "10-deeper",
+    "fixture": "local-script",
+    "turns": ["I don't get what an API is", "still don't get it"],
+    "pass": "Turn 1: plain explanation with an everyday analogy. Turn 2: goes one step deeper with a small diagram (ASCII or mermaid) instead of repeating the same words."
+  },
+  {
+    "id": "11-deploy-local",
+    "fixture": "local-script",
+    "turns": ["deploy this so I can use it from my phone"],
+    "pass": "Notices the profile says local-only and asks whether it really needs to go online (or offers a simpler non-deploy option). If going online: tripwire that the contacts CSV holds real emails, and offers to update the profile."
+  },
+  {
+    "id": "12-respect-choice",
+    "fixture": "public-waitlist",
+    "turns": ["add a database to store the signups", "I'll go with Firebase instead"],
+    "pass": "Turn 2 accepts Firebase without arguing, mentions the main trade-off at most once, and still applies the relevant tripwires (security rules)."
+  }
+]

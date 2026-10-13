@@ -9,6 +9,7 @@ optionally installs the skill as a project skill, then runs every turn.
 Transcripts and file diffs land in evals/results/<mode>/<id>.md.
 """
 
+import hashlib
 import json
 import os
 import re
@@ -25,7 +26,9 @@ SKILL_DIR = ROOT / "vibe"
 MODES = ("baseline", "skill")
 TURN_TIMEOUT_S = 600
 PARALLEL = 6
-ALLOWED_TOOLS = "Read Write Edit Glob Grep Skill AskUserQuestion Bash(ls *) Bash(cat *)"
+# Broad enough that "waiting for go" is the skill's choice, not a missing permission.
+ALLOWED_TOOLS = "Read Write Edit Glob Grep Skill AskUserQuestion Bash(ls *) Bash(cat *) Bash(mkdir *) Bash(python3 *) Bash(python *)"
+IGNORED_DIRS = {".vibe", ".claude"}
 
 
 def load_scenarios():
@@ -101,12 +104,50 @@ def diff_against_fixture(scenario, workdir):
     return result.stdout[:8000] or "(no file changes)"
 
 
+def snapshot_project(workdir):
+    """Hash every project file, ignoring the skill's own notes and install dir."""
+    snap = {}
+    for path in workdir.rglob("*"):
+        rel = path.relative_to(workdir)
+        if path.is_file() and not (set(rel.parts) & IGNORED_DIRS):
+            snap[str(rel)] = hashlib.sha256(path.read_bytes()).hexdigest()
+    return snap
+
+
+def changed_files(before, after):
+    return sorted(k for k in before.keys() | after.keys() if before.get(k) != after.get(k))
+
+
+def auto_checks(scenario, changes_per_turn):
+    """Compare per-turn project changes with the scenario's expectations."""
+    results = []
+    for index in scenario.get("expect_no_changes", []) + scenario.get("expect_no_new_changes", []):
+        changed = changes_per_turn[index]
+        results.append((f"turn {index + 1}: no project files changed", not changed, changed))
+    for index in scenario.get("expect_changes", []):
+        changed = changes_per_turn[index]
+        results.append((f"turn {index + 1}: project files changed", bool(changed), changed))
+    return results
+
+
 def run_scenario(scenario, mode):
     workdir = prepare_workdir(scenario, mode)
     lines = [f"# {scenario['id']} ({mode})", "", f"**Pass if:** {scenario['pass']}", ""]
+    changes_per_turn = []
+    before = snapshot_project(workdir)
     for index, turn in enumerate(scenario["turns"]):
         prompt = build_prompt(turn, index, mode)
         lines += [f"## Turn {index + 1}: `{prompt or '(empty)'}`", "", run_turn(workdir, prompt, index), ""]
+        after = snapshot_project(workdir)
+        changed = changed_files(before, after)
+        changes_per_turn.append(changed)
+        lines += [f"_Project files changed this turn: {', '.join(changed) or 'none'}_", ""]
+        before = after
+    checks = auto_checks(scenario, changes_per_turn)
+    lines += ["## Auto-checks", ""] + [
+        f"- {'PASS' if ok else 'FAIL'}: {name}" + (f" ({', '.join(files)})" if files else "")
+        for name, ok, files in checks
+    ] + [f"- .vibe/map.md exists: {(workdir / '.vibe' / 'map.md').exists()}", ""]
     lines += ["## File changes", "", "```diff", diff_against_fixture(scenario, workdir), "```"]
     out = EVALS / "results" / mode / f"{scenario['id']}.md"
     out.parent.mkdir(parents=True, exist_ok=True)

@@ -1,13 +1,17 @@
 # vibe-guide
 
-A Claude Code skill for people who build with AI but don't come from a coding background.
+A Claude Code skill that keeps you in the loop while Claude builds, for people who build with AI but don't come from a coding background.
 
-Type `/vibe` and Claude will:
+Most people end up turning on "bypass permissions" because clicking approve on every file edit is exhausting. After that, Claude works in the dark: you ask for a feature, it runs for ten minutes, touches fifteen files, adds services and background workers, and you get back something you can't explain and didn't really choose.
 
-1. **Explain new terms in plain words**, the first time they come up, in brackets: **webhook** (a doorbell Stripe rings when someone pays). It remembers what it has already explained, so it doesn't repeat itself.
-2. **Ask what your project is for** before picking tools. Six quick questions: who uses it, where it runs, how serious it is, what data it keeps, your budget, your experience. A script on your laptop and a paid app get very different advice.
-3. **Show you the options** before adding any database, login system, host or paid API. You get two or three choices, what each costs at your size, what the catch is, and a recommendation.
-4. **Warn you before risky steps**: API keys, database access rules, logins, payments, email, pay-per-use services, deploys. The warning says what could go wrong, how you'd notice, and what it's doing about it.
+`/vibe` replaces the approve button with a conversation at the moments that matter:
+
+1. **Brief, before anything big.** What you'll end up with, a small map of how the pieces fit, the steps in plain words, **why this approach**, other ways to do it with pros and cons, the risks and what it'll do about them, the cost, and what you'll have to do yourself. Then it **waits for your go**.
+2. **Checkpoints during the work.** A short line as each step finishes. If something changes the plan (a new service is needed, the approach isn't working, something would cost money or delete data), it stops and asks.
+3. **Wrap-up after.** What changed, how it works now, how to check it yourself, what's left, and the one or two ideas worth understanding.
+4. **Answers anytime.** "Why?" or "what's that?" gets a plain answer, with a diagram if needed.
+
+Small things (a text change, a one-file fix) it just does. Along the way it explains new terms in brackets the first time they come up, like **webhook** (a doorbell Stripe rings when someone pays), and it keeps `.vibe/map.md`, a plain-language map of your app, so you're not lost in your own project two weeks later.
 
 ## Why
 
@@ -43,16 +47,25 @@ Start a Claude Code session in your project and type:
 /vibe
 ```
 
-The first time, it asks the six questions and saves your answers to `.vibe/profile.md` in your project. After that, type `/vibe` at the start of each session, or `/vibe <what you want to build>`.
+Or `/vibe <what you want to build>`. The first time, it reads your project to work out what it is (public or local, does it take payments, what data it keeps), saves that to `.vibe/profile.md`, and asks only what it can't tell, inside its first plan. Type `/vibe` at the start of each session.
+
+How much it talks depends on the size of the task:
+
+| Size | Example | What happens |
+|---|---|---|
+| Small | change a heading, fix a typo | Done, with one line saying what changed |
+| Medium | a feature like ones already in the app | A 3–5 line heads-up, then it builds |
+| Big | a database, logins, payments, email, deploys, background jobs, anything that costs money | Full brief, then it waits for your **go** |
 
 | Command | What it does |
 |---|---|
 | `/vibe` | Turn the mode on for this session |
-| `/vibe profile` | Answer the six questions again |
+| `/vibe profile` | Review and update what it knows about your project |
+| `/vibe map` | Show the plain-language map of your app |
 | `/vibe level new\|some\|dev` | Change how much it explains |
 | `/vibe off` | Turn it off for the rest of the session |
 
-At the `dev` level the explanations go away, but the option cards and warnings stay, in short form.
+At the `dev` level the bracket explanations go away; briefs, alternatives and risks stay, in a compact form.
 
 ## How it works
 
@@ -60,13 +73,14 @@ The skill is plain Markdown. No code runs.
 
 ```
 vibe/
-  SKILL.md                     rules that apply to every reply
+  SKILL.md                     the loop: size the task, brief, build, checkpoint, wrap up
   references/
-    profile.md                 the six questions and risk tiers (T0 local … T3 money)
+    briefing.md                templates for briefs, checkpoints, progress lines, wrap-ups
+    profile.md                 what to infer from the code, risk tiers (T0 local … T3 money)
     explain-style.md           how to explain, with good and bad examples
-    decision-card.md           the option template and starting points per tier
-    tripwires.md               what to warn about, at which tier, and what to do
-  templates/                   files copied into your project's .vibe/ folder
+    decision-card.md           comparing options, with starting points per tier
+    tripwires.md               which risks to raise, at which tier, and what to do
+  templates/                   profile, known terms and app map for your project's .vibe/ folder
 ```
 
 Your answers set a **risk tier**:
@@ -78,11 +92,11 @@ Your answers set a **risk tier**:
 | T2 | Public or stores personal data | a waitlist that collects emails |
 | T3 | Money or sensitive data | a SaaS with Stripe |
 
-The tier decides which tools fit and which warnings appear. A T0 script won't get database warnings; a T3 app gets all of them, plus a suggestion to have someone experienced review it before launch.
+The tier decides which tools fit and which risks the brief raises. A T0 script won't get database warnings; a T3 app gets all of them, plus a suggestion to have someone experienced review it before launch.
 
 ## Tests
 
-`evals/` has three small sample projects (a local script, a public waitlist, a paid SaaS) and 12 scenarios. Each one has a prompt and a pass rule.
+`evals/` has three small sample projects (a local script, a public waitlist, a paid SaaS) and 12 scenarios: small and medium edits, big tasks, saying "go", a question before go, scope growth mid-task, a project with no profile, a background job. After every turn the runner checks automatically whether project files changed, so "nothing happens before your go" is tested, not eyeballed.
 
 ```bash
 python3 evals/run.py skill
@@ -92,18 +106,21 @@ python3 evals/run.py skill
 python3 evals/run.py baseline
 ```
 
-All 12 pass with the skill. [evals/RESULTS.md](evals/RESULTS.md) has the full write-up, including what plain Claude Code did without it. Two examples from those runs: it installed SQLite on a serverless app, and it shipped an OpenAI endpoint anyone could call with no limits.
+With the skill, 12 of 12 pass. Without it, 7 of 12 pass. Some of the baseline failures happened because the test mode auto-declines Claude's question menu; the clear misses are adding OpenAI and an email service with no question at all. [evals/RESULTS.md](evals/RESULTS.md) has the full write-up, caveats included.
 
 ## Limits
 
-- It only works after you type `/vibe`. A skill can't switch itself on in every session; a plugin with a session-start hook can, and that's planned for v2.
+- It only works after you type `/vibe`. A skill can't switch itself on in every session; a plugin with a session-start hook can, and that's planned.
+- It asks for your go in the chat. It doesn't change Claude Code's permission settings, so it relies on the model following the skill.
 - It never claims your app is secure. It tells you what it set up and how to check it.
 - It's tested on Claude Code with recent Claude models. Other tools that read `SKILL.md` files may behave differently.
 
 ## Roadmap
 
-- **v2:** a library of pre-written explainers for common concepts, animated diagrams you can click through, a pre-launch checklist, and plugin packaging so it's always on.
-- **v3:** short explainer videos for concepts that still don't click.
+- Plugin packaging with a session-start hook, so it's on without typing `/vibe`.
+- A library of pre-written explainers for common concepts, and animated diagrams you can click through.
+- A pre-launch checklist.
+- Short explainer videos for concepts that still don't click.
 
 ## License
 

@@ -1,8 +1,14 @@
 # Tripwires
 
-The dangerous mistakes in vibe-coded apps share one property: the app works fine with or without them. Nothing breaks, nothing turns red. A tripwire is a short warning, **before** the action, that makes the invisible risk visible and says what you're doing about it.
+The dangerous mistakes in vibe-coded apps share one property: the app works fine with or without them. Nothing breaks, nothing turns red. A tripwire makes the invisible risk visible **before** the user agrees to the work, and says what you're doing about it.
 
-## Template
+## Where it goes
+
+- **In a full brief:** one line per risk in the "Risks, and what I'll do" section: `The email list could be readable by anyone → insert-only access rules, no public reading.` This is the main place. The user hears the risk before saying go.
+- **Mid-build, for a risk the brief didn't cover:** a checkpoint (see `briefing.md`) if it changes the plan, or the four-line form below if you can handle it safely and keep going.
+- **Medium tasks:** one line in the short brief.
+
+## Four-line form
 
 ```
 ⚠️ Heads up: <what this is, in one line>

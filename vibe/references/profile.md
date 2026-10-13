@@ -1,8 +1,27 @@
 # Project profile
 
-Six questions, asked once per project. The answers decide which tools fit and which warnings matter. Ask them in a single `AskUserQuestion` call (it takes up to 4 questions per call, so use two calls: questions 1–4, then 5–6). Multiple choice only; the user can always pick "Other".
+Six facts about the project decide which tools fit and which risks matter. **Work out as many as you can from the project before asking anything.** A wall of questions before any help feels like a form, and most answers are already in the code.
 
-## The questions
+## Infer first
+
+| Fact | Where to look |
+|---|---|
+| Runs | Is it a web app (Next.js, Vite, Express, a `deploy` script, a Vercel/Netlify config) or a local script? |
+| Users | Signup or login code, a landing page, "waitlist" or "pricing" in the README → other people use it |
+| Stage | Payment code (Stripe, RevenueCat), a pricing page → paying customers |
+| Data | Forms collecting email, auth code, payments, anything health/finance/ID-related |
+| Budget | Can't be inferred. Assume **$0** until told otherwise, and say so |
+| Level | Can't be inferred reliably. Assume **Brand new** until told otherwise; drop explanations if they say they're a developer |
+
+Write the profile with inferred answers marked "(guessed)". Show it in one line in your first brief ("I'm assuming: public site, collects emails, $0 budget, new to coding. Tell me if any of that's wrong.").
+
+**Only ask when the answer changes the plan in front of you**, at most two questions, inside the brief. Budget matters for choosing a paid service; level rarely needs asking. For a small task, don't ask anything: assume the safer answer.
+
+When guessing between two tiers, pick the higher one. Over-warning a hobby project costs a sentence; under-warning a public one can leak data.
+
+## The questions (when you do need to ask)
+
+Ask with `AskUserQuestion`, or a numbered list if it isn't available. Multiple choice; the user can always answer in their own words. `/vibe profile` goes through all six.
 
 | # | Header | Question | Options |
 |---|---|---|---|
