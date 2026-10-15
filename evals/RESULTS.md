@@ -203,7 +203,7 @@ The user asked whether it works like a real developer: understand, recommend, ex
 | Bakery | 4 | yes | minimum notice (48h) on custom orders, sold-out / pause-orders switch, opening hours + address, allergy field |
 | Yoga booking | 5 | yes | confirmation email (cuts no-shows), self-serve cancellation, waitlist when full ("fine to add later"), teacher roster |
 | Family budget | 4 | yes | spending categories ("the point of the whole thing"), monthly bar chart by category, who-added-it, quick-add buttons |
-| Voice memos | 4 | yes | (see transcript) |
+| Voice memos | 4 | yes | client name + date header on each note, an archive folder of past notes, a "promise-catcher" that pulls out things you said you would do |
 
 Back-end explanations were plain and honest: "nothing yet, no monthly bill" (bakery), "Supabase holds your classes and bookings" (yoga), "your private Google Sheet, and Google as the host can technically see Drive files" (family budget).
 
