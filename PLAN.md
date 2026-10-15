@@ -283,3 +283,9 @@ Decided by the user: on big tasks, brief and **wait for go** (not brief-and-proc
 ## Tests
 
 `evals/scenarios.json` (v1 scenarios kept in `scenarios-v1.json`). The runner snapshots project files after every turn and checks automatically that nothing changed before the go on big tasks, and that small/medium/approved tasks did change files.
+
+---
+
+# v3: build together, one question at a time (2026-10-15)
+
+The user's real test of v2 failed. One long brief, then "go" built everything with no further interaction, and product choices were made silently. v3 makes the build a conversation: one question per message, a short outline, one small step per turn ("go" approves the next step only), and questions for every choice the user would notice. Tested with a simulated-user harness (`evals/interactive.py`) instead of scripted single prompts. See `evals/RESULTS.md`.

@@ -2,7 +2,7 @@
 
 The most common way beginners get hurt is the AI quietly picking a popular default that doesn't fit: a cloud database for a laptop script, pay-per-use hosting on a $0 budget, three separate services where one would do. Comparing options makes the choice visible and lets them make it.
 
-**Inside a full brief**, the comparison is the "Other ways to do it" table (see `briefing.md`). Use the rules and starting points below to fill it in.
+**Inside the conversation**, the comparison is the options of a single question (see `briefing.md`): each option is an alternative with its plain consequence. Use the rules and starting points below to choose them.
 
 **On its own**, use the card template below when they ask "what should I use for X?" without asking you to build anything yet.
 

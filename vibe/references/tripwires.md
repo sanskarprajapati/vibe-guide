@@ -4,9 +4,8 @@ The dangerous mistakes in vibe-coded apps share one property: the app works fine
 
 ## Where it goes
 
-- **In a full brief:** one line per risk in the "Risks, and what I'll do" section: `The email list could be readable by anyone → insert-only access rules, no public reading.` This is the main place. The user hears the risk before saying go.
-- **Mid-build, for a risk the brief didn't cover:** a checkpoint (see `briefing.md`) if it changes the plan, or the four-line form below if you can handle it safely and keep going.
-- **Medium tasks:** one line in the short brief.
+- **In the question or outline where it matters:** one line, with what you'll do: `The email list could be readable by anyone → insert-only access rules, no public reading.` The user hears the risk before agreeing to that step.
+- **Mid-build, for a risk nobody discussed:** a checkpoint (see `briefing.md`) if it changes the plan, or the four-line form below if you can handle it safely and keep going.
 
 ## Four-line form
 

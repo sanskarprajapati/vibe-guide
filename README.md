@@ -1,17 +1,19 @@
 # vibe-guide
 
-A Claude Code skill that keeps you in the loop while Claude builds, for people who build with AI but don't come from a coding background.
+A Claude Code skill that builds **with** you instead of **for** you, for people who build with AI but don't come from a coding background.
 
-Most people end up turning on "bypass permissions" because clicking approve on every file edit is exhausting. After that, Claude works in the dark: you ask for a feature, it runs for ten minutes, touches fifteen files, adds services and background workers, and you get back something you can't explain and didn't really choose.
+Most people turn on "bypass permissions" because clicking approve on every edit is exhausting. After that, Claude works in the dark: you say "build me X", it runs for ten minutes, makes dozens of decisions, and hands back a folder you can't explain and never really chose.
 
-`/vibe` replaces the approve button with a conversation at the moments that matter:
+`/vibe` turns the build into a conversation:
 
-1. **Brief, before anything big.** What you'll end up with, a small map of how the pieces fit, the steps in plain words, **why this approach**, other ways to do it with pros and cons, the risks and what it'll do about them, the cost, and what you'll have to do yourself. Then it **waits for your go**.
-2. **Checkpoints during the work.** A short line as each step finishes. If something changes the plan (a new service is needed, the approach isn't working, something would cost money or delete data), it stops and asks.
-3. **Wrap-up after.** What changed, how it works now, how to check it yourself, what's left, and the one or two ideas worth understanding.
-4. **Answers anytime.** "Why?" or "what's that?" gets a plain answer, with a diagram if needed.
+- **One question at a time.** Each one says why it matters, gives 2–4 options with what each means for you, and recommends one. Your answer shapes the next question.
+- **A short plan, then small steps.** "Go" starts the next step only. After each step: what was built, how to try it right now, the idea behind it, and the next question.
+- **You make the choices you'd notice.** How it looks, how it behaves, what it saves, what it costs, what happens in odd cases. Claude decides only the internals.
+- **You learn as you go.** New terms get a plain explanation the first time, like **webhook** (a doorbell Stripe rings when someone pays), and risks come up at the step where they matter.
 
-Small things (a text change, a one-file fix) it just does. Along the way it explains new terms in brackets the first time they come up, like **webhook** (a doorbell Stripe rings when someone pays), and it keeps `.vibe/map.md`, a plain-language map of your app, so you're not lost in your own project two weeks later.
+A real example from the tests, a bakery website: it asked whether orders should be paid online or sent as requests (requests, no card setup yet), then a set menu or custom cakes (both), then pickup or delivery (pickup), then where orders should land (WhatsApp, "I check it all day"). Then it built it in small steps, each one tried before moving on. Along the way it flagged that the WhatsApp number would be public on the page.
+
+Small things (a text change, a colour) it just does. It also keeps `.vibe/map.md`, a plain-language map of your app, so you're not lost in your own project later.
 
 ## Why
 
@@ -54,18 +56,21 @@ How much it talks depends on the size of the task:
 | Size | Example | What happens |
 |---|---|---|
 | Small | change a heading, fix a typo | Done, with one line saying what changed |
-| Medium | a feature like ones already in the app | A 3–5 line heads-up, then it builds |
-| Big | a database, logins, payments, email, deploys, background jobs, anything that costs money | Full brief, then it waits for your **go** |
+| Medium | a feature like ones already in the app | One question if there's a choice you'd notice, then it builds |
+| Big | a new app, a database, logins, payments, email, deploys, background jobs, anything that costs money | Questions one at a time, a short plan, then one step per turn |
+
+If you want it to go faster, say "just build the rest" or `/vibe pace milestone`. It will take bigger steps but still stop for choices you'd notice.
 
 | Command | What it does |
 |---|---|
 | `/vibe` | Turn the mode on for this session |
 | `/vibe profile` | Review and update what it knows about your project |
 | `/vibe map` | Show the plain-language map of your app |
+| `/vibe pace step\|milestone` | One step per turn (default), or bigger steps |
 | `/vibe level new\|some\|dev` | Change how much it explains |
 | `/vibe off` | Turn it off for the rest of the session |
 
-At the `dev` level the bracket explanations go away; briefs, alternatives and risks stay, in a compact form.
+At the `dev` level the bracket explanations go away; the questions, steps and risks stay.
 
 ## How it works
 
@@ -73,9 +78,9 @@ The skill is plain Markdown. No code runs.
 
 ```
 vibe/
-  SKILL.md                     the loop: size the task, brief, build, checkpoint, wrap up
+  SKILL.md                     the conversation: one question at a time, short plan, one step per turn
   references/
-    briefing.md                templates for briefs, checkpoints, progress lines, wrap-ups
+    briefing.md                a worked example conversation, plus templates for questions and steps
     profile.md                 what to infer from the code, risk tiers (T0 local … T3 money)
     explain-style.md           how to explain, with good and bad examples
     decision-card.md           comparing options, with starting points per tier
@@ -92,26 +97,33 @@ Your answers set a **risk tier**:
 | T2 | Public or stores personal data | a waitlist that collects emails |
 | T3 | Money or sensitive data | a SaaS with Stripe |
 
-The tier decides which tools fit and which risks the brief raises. A T0 script won't get database warnings; a T3 app gets all of them, plus a suggestion to have someone experienced review it before launch.
+The tier decides which tools fit and which risks it raises. A T0 script won't get database warnings; a T3 app gets all of them, plus a suggestion to have someone experienced review it before launch.
 
 ## Tests
 
-`evals/` has three small sample projects (a local script, a public waitlist, a paid SaaS) and 12 scenarios: small and medium edits, big tasks, saying "go", a question before go, scope growth mid-task, a project with no profile, a background job. After every turn the runner checks automatically whether project files changed, so "nothing happens before your go" is tested, not eyeballed.
+Two kinds, both using real `claude -p` sessions on small sample projects in `evals/fixtures/`.
+
+**Conversation tests** (`evals/interactive.py`): a second Claude plays a non-technical person and answers each message in character, for up to 10 turns. Each turn records how many questions were asked, how long the message was, and how many files changed.
+
+```bash
+python3 evals/interactive.py skill habit-tracker bakery-orders voice-notes waitlist-db
+```
+
+On the habit tracker, plain Claude Code built the app in its first reply, and the previous version of this skill sent a 530-word plan and then built everything at once. The current version asked one question per message for four turns, then built one step per turn.
+
+**Scripted tests** (`evals/run.py`): fixed prompts that check, for example, that nothing changes before you agree to a big task.
 
 ```bash
 python3 evals/run.py skill
 ```
 
-```bash
-python3 evals/run.py baseline
-```
-
-With the skill, 12 of 12 pass. Without it, 7 of 12 pass. Some of the baseline failures happened because the test mode auto-declines Claude's question menu; the clear misses are adding OpenAI and an email service with no question at all. [evals/RESULTS.md](evals/RESULTS.md) has the full write-up, caveats included.
+[evals/RESULTS.md](evals/RESULTS.md) has every round, including what went wrong and the caveats.
 
 ## Limits
 
 - It only works after you type `/vibe`. A skill can't switch itself on in every session; a plugin with a session-start hook can, and that's planned.
 - It asks for your go in the chat. It doesn't change Claude Code's permission settings, so it relies on the model following the skill.
+- Messages still run longer than ideal (about 190 words on average in tests).
 - It never claims your app is secure. It tells you what it set up and how to check it.
 - It's tested on Claude Code with recent Claude models. Other tools that read `SKILL.md` files may behave differently.
 

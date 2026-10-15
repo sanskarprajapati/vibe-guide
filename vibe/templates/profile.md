@@ -10,6 +10,7 @@
 | What data does it keep? | {data} |
 | Monthly budget? | {budget} |
 | Experience | {level} |
+| Pace | step |
 
 **Risk tier:** {tier}
 **Why:** {tier_reason}

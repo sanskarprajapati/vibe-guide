@@ -1,0 +1,30 @@
+[
+  {
+    "id": "habit-tracker",
+    "fixture": "empty",
+    "first_message": "build me a habit tracker I can use in my browser, just for me",
+    "persona": "You work in marketing and have never written code. You want a simple habit tracker for yourself (things like walking, reading, drinking water). You like clean, minimal looks. You don't know technical words and say so if confused. You're happy to answer questions but get impatient with long walls of text.",
+    "max_turns": 10
+  },
+  {
+    "id": "waitlist-db",
+    "fixture": "public-waitlist",
+    "first_message": "add a database to store the signups",
+    "persona": "You run a small side project called Plantpal and made this waitlist page with AI help last week. You're not technical. You want to collect emails before launch and look at the list. Budget is small. You'd rather not share any passwords or keys with the AI.",
+    "max_turns": 8
+  },
+  {
+    "id": "bakery-orders",
+    "fixture": "empty",
+    "first_message": "i want a simple website for my bakery where people can see the menu and order cakes",
+    "persona": "You run a small home bakery and sell cakes to locals through Instagram DMs today. You've never built a website. You want people to see your cakes and order ahead for pickup. You'd like to take payment if it's not complicated, but you're worried about fees and doing something wrong with card details. Answer in short casual messages.",
+    "max_turns": 8
+  },
+  {
+    "id": "voice-notes",
+    "fixture": "empty",
+    "first_message": "make me a tool that turns my voice memos into tidy written notes",
+    "persona": "You're a freelance designer who records voice memos on your phone after client calls. You're not technical. You want them turned into written notes you can read. You're careful with money and have heard AI APIs can get expensive. You don't want to share any passwords or keys with the AI. Short messages.",
+    "max_turns": 8
+  }
+]

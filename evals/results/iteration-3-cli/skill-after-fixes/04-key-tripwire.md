@@ -12,7 +12,7 @@
 
 `[tool] Read {"file_path": "<workdir>/.claude/skills/vibe/references/tripwires.md"}`
 
-`[tool] Bash {"command": "cat <workdir>/README.md <workdir>/package.json && echo \"---APP---\" && ls <workdir>/app && echo \"---FILES---\" && find /private/var/fold`
+`[tool] Bash {"command": "cat <workdir>/README.md <workdir>/package.json && echo \"---APP---\" && ls <workdir>/app && echo \"---FILES---\" && find <workdir>`
 
 `[tool] Read {"file_path": "<workdir>/app/page.tsx"}`
 

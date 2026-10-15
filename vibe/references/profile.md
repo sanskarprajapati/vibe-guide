@@ -13,9 +13,9 @@ Six facts about the project decide which tools fit and which risks matter. **Wor
 | Budget | Can't be inferred. Assume **$0** until told otherwise, and say so |
 | Level | Can't be inferred reliably. Assume **Brand new** until told otherwise; drop explanations if they say they're a developer |
 
-Write the profile with inferred answers marked "(guessed)". Show it in one line in your first brief ("I'm assuming: public site, collects emails, $0 budget, new to coding. Tell me if any of that's wrong.").
+Write the profile with inferred answers marked "(guessed)". Mention it in one line in your first message ("I'm assuming: public site, collects emails, $0 budget, new to coding. Tell me if any of that's wrong.").
 
-**Only ask when the answer changes the plan in front of you**, at most two questions, inside the brief. Budget matters for choosing a paid service; level rarely needs asking. For a small task, don't ask anything: assume the safer answer.
+**Only ask when the answer changes what you'll build**, one question at a time, as part of the conversation. Budget matters for choosing a paid service; level rarely needs asking. For a small task, don't ask anything: assume the safer answer.
 
 When guessing between two tiers, pick the higher one. Over-warning a hobby project costs a sentence; under-warning a public one can leak data.
 

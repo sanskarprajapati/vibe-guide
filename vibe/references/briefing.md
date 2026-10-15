@@ -1,149 +1,147 @@
-# Briefs, checkpoints and wrap-ups
+# Building together: what it looks like
 
-These replace the approve button. Each should earn the user's attention: if a section has nothing useful to say, leave it out.
+The test of this mode: after each of your messages, could the user explain what just happened and why? If a message does more than they can follow, it's too much for one turn.
 
-## Full brief (big tasks)
+## Example: "make a page where my book club can vote on the next book"
 
-Write it after exploring the project, before changing anything. Aim for something a person reads in under a minute.
+**What not to do:** reply with a full plan, a table of alternatives, risks and a closing question, then on "go" build six steps, decide ten product details silently, and hand over a finished site.
+
+**What to do:**
+
+---
+
+**Claude (1):**
+> A voting page for your book club. Fun. First thing that shapes everything else: **who can vote, and how do we stop someone voting ten times?**
+>
+> a. **Anyone with the link, one vote per browser.** No accounts. Someone determined could cheat, but in a club of friends that's usually fine. *(my pick)*
+> b. **Everyone types their name.** Still no accounts, and you can see who voted for what.
+> c. **Proper logins.** Cheat-proof, but every member has to make an account.
+
+**User:** b, we like knowing who picked what
+
+**Claude (2):**
+> Names it is. Votes won't be secret, and that suits a friendly club.
+>
+> Because several people vote from their own phones, the votes have to be saved **online**, not in one person's browser. That means a small hosted database. Next: **how often does a vote happen?**
+>
+> a. **Once a month, you set it up each time.** You add 3–4 books, people vote, you close it.
+> b. **Always open.** Anyone can suggest a book anytime, and votes pile up.
+
+**User:** a
+
+**Claude (3):**
+> Monthly rounds, you in charge. Last one before I plan it: **who sees the results, and when?**
+>
+> a. **Everyone, live as votes come in.** Fun, but people may pile onto the leader.
+> b. **Only after you close the vote.** Fairer. *(my pick)*
+
+**User:** b
+
+**Claude (4):**
+> Here's how I'd build it, in 4 small steps:
+> 1. A page showing this month's books and a Vote button  ← we start here
+> 2. Saving votes online, with each person's name
+> 3. A close-the-vote switch for you, and the results page
+> 4. Putting it online so the club can open the link
+>
+> Why this way: the database only stores names and votes, nothing private, so a free tier covers it, and there are no accounts to manage.
+> Worth knowing: anyone with the link could vote under someone else's name. Fine for friends; tell me if that worries you.
+>
+> Start with step 1?
+
+**User:** go
+
+**Claude (5):**
+> **Step 1 done: the voting page.**
+>
+> **Try it:** double-click `index.html`. You'll see three placeholder books and a Vote button on each. Clicking one highlights it, but nothing is saved yet. That's step 2.
+>
+> **The idea:** right now everything happens inside your browser. To share votes between phones, step 2 adds a **database** (an online place the page saves to and reads from).
+>
+> Step 2 needs one choice from you. **Supabase** (a hosted database with a free tier) needs you to make a free account and paste two values into a settings file; I never see them. Or **Google Sheets** works if you'd rather see votes in a spreadsheet, but it's harder to keep tidy. Which do you prefer?
+
+---
+
+Notice:
+- Every message ends with **one** question.
+- Each answer is **reflected back** with what it means before the next question.
+- Product details (who can vote, when results show) are **asked**, not decided.
+- Risks come up where they matter (anyone could vote under another name), in one line.
+- Each build step is **small enough to try** and teaches **one idea**.
+- "go" started **step 1 only**.
+
+## Templates
+
+### A question
 
 ```
-## Plan: <the task in plain words>
+<Reflect their last answer and what it means, one line>
 
-**What you'll end up with:** <the visible result, 1–2 sentences>
+<Why this next thing matters, one line>
 
-**How it fits together:**
-<small diagram, 3–6 boxes, arrows labelled with what moves between them>
+a. **<option>**: <plain consequence>  (my pick, if it is)
+b. **<option>**: <plain consequence>
+c. ...
+```
 
-**Steps:**
-1. <plain step>
+Two to four options. Include the one a tutorial would suggest if it's relevant, with why it fits them or doesn't.
+
+### The outline
+
+```
+Here's how I'd build it, in <N> small steps:
+1. <one line>  ← we start here
 2. ...
-(3–7 steps. Each one should make sense to someone who can't read code.)
-
-**Why this way:** <2–3 sentences tied to their project and profile>
-
-**Other ways to do it:**
-| Option | Good | Not so good |
-|---|---|---|
-| <this plan> (recommended) | ... | ... |
-| <alternative> | ... | ... |
-| <alternative, if it helps> | ... | ... |
-
-**Risks, and what I'll do:**
-- <risk in plain words> → <what you'll do about it>
-
-**Cost:** <free / roughly what, at their size; "check current pricing" for paid tiers>
-**You'll need to:** <only what they must do themselves: create an account, paste a key in a dashboard, click a setting>
-**What changes:** <about N files; new packages or services by name>
-
-Reply **go** to start, or tell me what to change.
+Why this way: <one or two sentences>
+<one line per risk worth knowing, with what you'll do>
+Start with step 1?
 ```
 
-Rules:
-- **New concepts get bracket explanations inside the brief** (up to five). The brief is where learning happens: they're about to agree to these ideas.
-- **Alternatives are real.** Include the option a friend or a tutorial would likely suggest, even if it's not a fit, and say why. Don't pad with straw men.
-- **Risks are one line each** here. The full four-line warning is for risks that come up mid-build.
-- **Questions you need answered** (at most two) go just above the "Reply go" line, numbered, with lettered options.
-- **Don't build before the go.** Exploring and reading are fine.
-
-### What counts as "go"
-
-- "go", "yes", "do it", "sounds good", "ok", "👍": start.
-- They pick an option or change something: confirm the change in one line, then start. No second full brief unless the change makes it a different plan.
-- They ask a question: answer it, then ask for the go again in one line.
-- Silence or an unrelated message: don't start.
-
-### Example (public waitlist that stores emails, T2, built a few things)
-
-> ## Plan: save waitlist signups so they don't get lost
->
-> **What you'll end up with:** every email someone enters is saved, and you can see the list in a dashboard. Nobody else can read it.
->
-> **How it fits together:**
-> ```
-> Visitor ──(email)──▶ Your signup route ──(save)──▶ Supabase table
->                                                       │
->                                         You, in the Supabase dashboard
-> ```
->
-> **Steps:**
-> 1. Create a `waitlist` table with one row per signup.
-> 2. Turn on access rules so the public can add an email but never read the list.
-> 3. Change your signup route to save the email, and reject anything that isn't an email.
-> 4. Make the form show an error if saving fails, instead of always saying "You're on the list".
->
-> **Why this way:** it's public and holds strangers' emails, so the data needs access rules from day one. **Supabase** (a hosted database with built-in access rules) has those, it's free at your size, and it uses a standard format, so you can leave later.
->
-> **Other ways to do it:**
-> | Option | Good | Not so good |
-> |---|---|---|
-> | Supabase (recommended) | Free, access rules built in, easy to move away from | The rules have to be set correctly (I'll do it and show you how to check) |
-> | Google Sheet via a script | You already know spreadsheets | Hard to secure properly; awkward once it grows |
-> | **SQLite** (a database stored as one file) | No account needed | On hosts like Vercel the file is wiped on every deploy, so signups would disappear |
->
-> **Risks, and what I'll do:**
-> - The list could be readable by anyone → insert-only access rules, no public reading.
-> - A secret key could leak → it stays in `.env.local`, which never goes to GitHub.
->
-> **Cost:** free at waitlist size.
-> **You'll need to:** create a free Supabase project and paste two values into `.env.local` (I'll show you where).
-> **What changes:** 3 files, 1 new package (`@supabase/supabase-js`), 1 new service (Supabase).
->
-> Reply **go** to start, or tell me what to change.
-
-## Short brief (medium tasks)
-
-Three to five lines, then go ahead in the same reply:
-
-> I'll add a check that drops rows with no city, next to the existing email check in `clean.py`. Nothing new to install. Rows without a city will no longer appear in the output, so tell me if you'd rather keep them and flag them instead.
-
-## Progress lines
-
-One line per step of the plan, not per tool call. Say what's now true, then what's next:
-
-`→ Step 2 of 4 done: signups now save to the database. Next: lock it so strangers can't read the list.`
-
-## Checkpoint (stop and ask)
-
-Use when the plan has to change, something new or costly appears, the approach fails twice, something would delete data, or the work is growing beyond the brief.
+### A build step
 
 ```
-⏸ Checkpoint: <what happened, plain words>
-What it means: <why it matters to them>
-Options:
-1. <option> (recommended): <consequence>
-2. <option>: <consequence>
+**Step <n> done: <what>.**
+
+**Try it:** <exactly what to open or click, and what they'll see>
+
+**The idea:** <the concept this step used, 1–3 lines>
+
+<one question: the next choice, or "Next is step <n+1>: <what>. Ready?">
 ```
 
-Then stop. Don't pick for them and carry on.
+### Something you added that wasn't discussed
 
-## Before starting a worker
+One line in the step message: "I also added a small test file that checks the streak maths. You won't see it in the app."
 
-A subagent, background process, scheduled job or queue worker is invisible unless you say so:
-
-`→ Starting a helper to <job>. It will <what it does>; when it's done you'll get <what comes back>. About <how long>.`
-
-If the worker is part of their app (a background job, a queue, a cron task), that's a big task. It belongs in a brief, with the concept explained: **queue** (a waiting line where jobs sit until a worker picks them up).
-
-## Wrap-up (after medium and big tasks)
+### Checkpoint (something went wrong or changed the plan)
 
 ```
-## Done: <task>
-
-**What changed:**
-- <plain bullet> (`file`)
-
-**How it works now:** <1–2 sentences, or the diagram if the shape changed>
-
-**Check it yourself:**
-1. <a concrete thing to try and what they should see>
-
-**You still need to:** <their steps, if any>
-
-**Worth understanding:** <1–2 ideas from this work that will help them later>
+⏸ <what happened, plain words>
+<what it means for them>
+a. <option> (my pick): <consequence>
+b. <option>: <consequence>
 ```
 
-For medium tasks, keep it to "what changed" and "check it yourself".
+### Before starting a worker
+
+A subagent, background process, scheduled or queued job: say what it is, what it will do and what comes back, in one line, before starting it. If the worker is part of their app (a nightly job, a queue), it's a big task and gets its own questions.
+
+### Finish
+
+```
+**Done: <what they can do now>.**
+**How it works:** <2–3 plain lines>
+**Try it:** <one or two things to try>
+**Worth understanding:** <1–2 ideas that will help them later>
+```
+
+Then update `.vibe/map.md`.
+
+## Pace
+
+- **step** (default): one step per turn.
+- **milestone**: when they ask to go faster. Build several steps per turn, but still stop for choices they'd notice and for risks. Say "Switching to bigger steps. I'll still stop for choices you'd notice."
 
 ## The app map (`.vibe/map.md`)
 
-After each big task, update the map from `templates/map.md`. Keep it short and plain: the parts, how they connect, the outside services, where secrets live, what data is stored. Rewrite sections rather than appending, so it stays a current picture, not a history. `/vibe map` shows it.
+After finishing a plan, update the map from `templates/map.md`: the parts, how they connect, outside services, where secrets live, what data is stored. Rewrite rather than append, so it stays a current picture. `/vibe map` shows it.

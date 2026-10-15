@@ -137,3 +137,54 @@ Re-runs of 03, 07 and 10 after the fixes: all pass, and each fix shows up in the
 - One bracket explanation used `**GitHub** = ...` instead of round brackets.
 - Medium tasks sometimes skip the short brief and just do the change (02). Acceptable, but not what the spec says.
 - The waiting is behavioural: it relies on the model following the skill. It doesn't change Claude Code's permission settings.
+
+---
+
+# v3: build together, one question at a time (2026-10-15)
+
+## Why v2 failed in real use
+
+A real test session (habit tracker, permissions bypassed) showed v2's flaw. Turn 1 was a 500-word brief with one question tucked at the end. The user said "go", and Claude built all six steps (~40 actions) without another word. It picked product details silently ("you didn't pick, so I chose daily habits", whether today counts toward a streak, a 7-day backup reminder) and added a file nobody discussed. The user learned nothing until the final wrap-up. v2 had replaced the approve button with one approve-everything button.
+
+The scripted v2 tests missed this because they type "go" once and only check that nothing changed before it.
+
+## What changed
+
+- One question per message, each with why it matters, 2–4 options with plain consequences, and a recommendation. Each answer is reflected back before the next question.
+- A short outline (under 15 lines) after the questions, not a brief instead of them.
+- "go" approves the next step only. Each build turn: one small step, how to try it now, the idea it used, one question.
+- Choices the user would notice are asked when reached; only internals are decided silently.
+- A pace switch (`step` / `milestone`) for users who want bigger steps.
+
+## New test: simulated user
+
+`evals/interactive.py` runs a full conversation. A second `claude -p` plays a non-technical persona and answers each message in character. Per turn it records words, questions asked and project files changed. `old` mode runs the skill as committed in git, for before/after comparisons. Results: `results/v3-interactive/`.
+
+### Habit tracker: no skill vs v2 vs v3
+
+| | No skill | v2 | v3 |
+|---|---|---|---|
+| Turns before the simulated user had nothing left to say | 3 | 2 | 8 |
+| First message | started building | 530 words, 2 questions | 123 words, 1 question |
+| Built | turn 1 | everything in turn 2 | one step per turn, turns 5–8 |
+| Questions per message | 0 | 2, then 1 | 1 |
+
+The first v3 habit-tracker run copied the worked example in `briefing.md`, which was also a habit tracker. The example is now a book-club voting page, and the habit tracker was re-run: it asked different questions in its own words.
+
+### v3 on new projects (8 turns each)
+
+| Scenario | First file change | Most files in one turn | Notes |
+|---|---|---|---|
+| Bakery site (menu + cake orders) | turn 6 | 2 | Asked: payment vs request form, set menu vs custom, pickup vs delivery, where orders land (chose WhatsApp). Raised that the WhatsApp number is public. Caught that the number given was a reserved fake (555-01xx). Asked the look (pastels) and photos vs tiles |
+| Voice memos to notes | turn 6 | 3 | Answered "how much will this cost?" with a free local option vs pay-as-you-go; user chose free (Whisper + Ollama on their Mac), no account or keys needed |
+| Habit tracker (re-run) | turn 5 | 1 | Different questions from the example: yes/no vs counts, what to see first |
+| Waitlist database | turn 5 | 1 | Turned into a guided walkthrough: "you make the Supabase account and paste the keys, I never see them", one dashboard step per turn |
+
+No conversation asked more than one real question per message. The two bakery turns counted as "2 questions" by the heuristic were one question plus a rhetorical one.
+
+### Known gaps
+
+- Messages average ~190 words; the target is shorter.
+- Exact prices from memory still appear ("$0.006 per minute").
+- In `-p` mode the declined question tool sometimes makes the opening line appear twice. This is an artifact of the test harness; in a real session the question menu appears.
+- One silent product pick in the waitlist run ("no duplicate-email check, picking for you"). A rule against this was added after the run.
