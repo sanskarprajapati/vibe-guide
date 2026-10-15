@@ -7,6 +7,7 @@ Most people turn on "bypass permissions" because clicking approve on every edit 
 `/vibe` turns the build into a conversation:
 
 - **One question at a time.** Each one says why it matters, gives 2–4 options with what each means for you, and recommends one. Your answer shapes the next question.
+- **A pitch before any code.** Like a good developer: how it'll work when it's done (from your side), what's on screen vs what happens behind the scenes, and 2–4 features you didn't think of but will probably need. For a bakery: a minimum notice period and a sold-out switch. For a yoga booking page: confirmation emails and self-serve cancellation.
 - **A short plan, then small steps.** "Go" starts the next step only. After each step: what was built, how to try it right now, the idea behind it, and the next question.
 - **You make the choices you'd notice.** How it looks, how it behaves, what it saves, what it costs, what happens in odd cases. Claude decides only the internals.
 - **You learn as you go.** New terms get a plain explanation the first time, like **webhook** (a doorbell Stripe rings when someone pays), and risks come up at the step where they matter.

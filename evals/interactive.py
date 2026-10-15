@@ -91,6 +91,16 @@ def count_questions(text):
     return max(len(sentences), option_groups)
 
 
+def has_proposal(text):
+    """Did this message pitch the finished product: how it works, front/back, suggested features?"""
+    lowered = text.lower()
+    return all(any(k in lowered for k in keys) for keys in (
+        ("how it'll work", "how it will work"),
+        ("front end", "what people see", "what customers see", "what you see"),
+        ("features i'd suggest", "features i would suggest", "suggest"),
+    ))
+
+
 def simulate_user(persona, message):
     prompt = USER_PROMPT.format(persona=persona, message=message[-6000:], done=DONE_TOKEN)
     with tempfile.TemporaryDirectory() as empty:
@@ -118,7 +128,8 @@ def run_conversation(scenario, mode):
         changed = run.changed_files(before, after)
         before = after
         text = visible_text(transcript)
-        row = {"turn": index + 1, "words": len(text.split()), "questions": count_questions(text), "files": len(changed)}
+        row = {"turn": index + 1, "words": len(text.split()), "questions": count_questions(text), "files": len(changed),
+               "proposal": has_proposal(text)}
         metrics.append(row)
         lines += [f"## Turn {index + 1}", "", f"**User:** {prompt}", "", transcript, "",
                   f"_words: {row['words']} · questions: {row['questions']} · files changed: {len(changed)} {changed if changed else ''}_", ""]
@@ -138,13 +149,16 @@ def summarize(metrics):
     if not metrics:
         return "(no turns)"
     first_change = next((m["turn"] for m in metrics if m["files"]), None)
-    rows = ["| Turn | Words | Questions | Files changed |", "|---|---|---|---|"]
-    rows += [f"| {m['turn']} | {m['words']} | {m['questions']} | {m['files']} |" for m in metrics]
+    rows = ["| Turn | Words | Questions | Files changed | Proposal |", "|---|---|---|---|---|"]
+    rows += [f"| {m['turn']} | {m['words']} | {m['questions']} | {m['files']} | {'yes' if m['proposal'] else ''} |" for m in metrics]
+    proposal_turn = next((m["turn"] for m in metrics if m["proposal"]), None)
     multi_q = sum(1 for m in metrics if m["questions"] > 1)
     stats = [
         f"- Turns: {len(metrics)}",
         f"- First file change on turn: {first_change}",
         f"- Most files changed in one turn: {max(m['files'] for m in metrics)}",
+        f"- Proposal (how it works, front/back, suggested features) on turn: {proposal_turn}"
+        + (" (before first code change)" if proposal_turn and (not first_change or proposal_turn < first_change) else ""),
         f"- Turns asking more than one question: {multi_q}",
         f"- Turns ending with no question: {sum(1 for m in metrics if m['questions'] == 0)}",
         f"- Average words per turn: {sum(m['words'] for m in metrics) // len(metrics)}",

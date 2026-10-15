@@ -38,11 +38,31 @@ The test of this mode: after each of your messages, could the user explain what 
 **User:** b
 
 **Claude (4):**
+> **How it'll work when it's done:**
+> 1. You add this month's 3–4 books and share the link in your group chat.
+> 2. Each member opens it on their phone, types their name and taps a book.
+> 3. You tap "Close vote" when everyone's in.
+> 4. Everyone sees the results: which book won, and who picked what.
+>
+> **What's in front, what's behind:**
+> - **What people see** (the front end): the voting page, and the results page.
+> - **Behind the scenes** (the back end): a small online **database** (a place on the internet that stores the votes) so votes from different phones end up in one list. It holds only names and votes.
+>
+> **Features I'd suggest** (pick any, or none):
+> - **One vote per name**: if someone votes twice, it replaces their old vote instead of counting twice. *(I'd do this first)*
+> - **Short description per book**: one line on what it's about, so people don't have to look it up.
+> - **"Who hasn't voted yet" list for you**: so you know who to nudge before closing.
+>
+> Which of these do you want?
+
+**User:** the first and the last one
+
+**Claude (5):**
 > Here's how I'd build it, in 4 small steps:
 > 1. A page showing this month's books and a Vote button  ← we start here
-> 2. Saving votes online, with each person's name
-> 3. A close-the-vote switch for you, and the results page
-> 4. Putting it online so the club can open the link
+> 2. Saving votes online, with each person's name (one vote per name)
+> 3. Your admin view: who hasn't voted yet, and a close-the-vote switch
+> 4. The results page, then putting it online so the club can open the link
 >
 > Why this way: the database only stores names and votes, nothing private, so a free tier covers it, and there are no accounts to manage.
 > Worth knowing: anyone with the link could vote under someone else's name. Fine for friends; tell me if that worries you.
@@ -51,7 +71,7 @@ The test of this mode: after each of your messages, could the user explain what 
 
 **User:** go
 
-**Claude (5):**
+**Claude (6):**
 > **Step 1 done: the voting page.**
 >
 > **Try it:** double-click `index.html`. You'll see three placeholder books and a Vote button on each. Clicking one highlights it, but nothing is saved yet. That's step 2.
@@ -66,6 +86,7 @@ Notice:
 - Every message ends with **one** question.
 - Each answer is **reflected back** with what it means before the next question.
 - Product details (who can vote, when results show) are **asked**, not decided.
+- Before building, it **pitches**: how it will work, front end vs back end in plain words, and features they didn't think of, specific to a book club.
 - Risks come up where they matter (anyone could vote under another name), in one line.
 - Each build step is **small enough to try** and teaches **one idea**.
 - "go" started **step 1 only**.
@@ -86,7 +107,23 @@ c. ...
 
 Two to four options. Include the one a tutorial would suggest if it's relevant, with why it fits them or doesn't.
 
-### The outline
+### The proposal (message A)
+
+```
+**How it'll work when it's done:**
+1. <what the person using it does and sees, as a short story>
+
+**What's in front, what's behind:**
+- **What people see** (the front end): ...
+- **Behind the scenes** (the back end): ... (or "nothing yet, which keeps it free")
+
+**Features I'd suggest** (pick any, or none):
+- <feature>: <why it helps them>  (I'd do this first)
+```
+
+Then one multi-select question.
+
+### The build plan (message B)
 
 ```
 Here's how I'd build it, in <N> small steps:

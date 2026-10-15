@@ -26,5 +26,19 @@
     "first_message": "make me a tool that turns my voice memos into tidy written notes",
     "persona": "You're a freelance designer who records voice memos on your phone after client calls. You're not technical. You want them turned into written notes you can read. You're careful with money and have heard AI APIs can get expensive. You don't want to share any passwords or keys with the AI. Short messages.",
     "max_turns": 8
+  },
+  {
+    "id": "yoga-booking",
+    "fixture": "empty",
+    "first_message": "I teach yoga classes and want a page where people can book a spot in my classes",
+    "persona": "You teach 5 small yoga classes a week (max 12 people each) and currently take bookings over text messages, which is chaos. You're not technical at all. You want students to see the schedule and book a spot. Some students pay per class, some have a 10-class pass, but you're not sure if the site should handle money. Short friendly messages.",
+    "max_turns": 8
+  },
+  {
+    "id": "family-budget",
+    "fixture": "empty",
+    "first_message": "can you build something so me and my wife can track our spending together",
+    "persona": "You and your wife want to see where your money goes each month. You're not technical. You both use iPhones. You'd want to add expenses quickly and see a monthly total by category. You're a bit worried about privacy since it's your finances. Short messages.",
+    "max_turns": 8
   }
 ]

@@ -188,3 +188,23 @@ No conversation asked more than one real question per message. The two bakery tu
 - Exact prices from memory still appear ("$0.006 per minute").
 - In `-p` mode the declined question tool sometimes makes the opening line appear twice. This is an artifact of the test harness; in a real session the question menu appears.
 - One silent product pick in the waitlist run ("no duplicate-email check, picking for you"). A rule against this was added after the run.
+
+## v3.1: the developer's pitch (2026-10-15)
+
+The user asked whether it works like a real developer: understand, recommend, explain how the finished thing will work (front end and back end in plain words), suggest features, and only then code. It did the first two and the last, but not the pitch. Added a two-message proposal between the questions and the build:
+
+1. **How it'll work when it's done** (a short story from the user's side), **what's in front / what's behind**, and **2–4 suggested features** specific to the project, as one multi-select question.
+2. **The build plan** including the picked features, then "Start with step 1?"
+
+`interactive.py` now flags the turn where the proposal appears. Results: `results/v3b-proposal/`.
+
+| Project | Proposal turn | Before any code? | Features it suggested |
+|---|---|---|---|
+| Bakery | 4 | yes | minimum notice (48h) on custom orders, sold-out / pause-orders switch, opening hours + address, allergy field |
+| Yoga booking | 5 | yes | confirmation email (cuts no-shows), self-serve cancellation, waitlist when full ("fine to add later"), teacher roster |
+| Family budget | 4 | yes | spending categories ("the point of the whole thing"), monthly bar chart by category, who-added-it, quick-add buttons |
+| Voice memos | 4 | yes | (see transcript) |
+
+Back-end explanations were plain and honest: "nothing yet, no monthly bill" (bakery), "Supabase holds your classes and bookings" (yoga), "your private Google Sheet, and Google as the host can technically see Drive files" (family budget).
+
+**Problem found:** setup steps the user does themselves turned into walls of instructions (443 and 477 words in the family-budget run). Added: aim for under 150 words per turn, and split anything longer into one-screen steps ending in "tell me when you see X". Re-run: longest message 281 words (from 477), average ~195. Still above the target, but no more walls. Also added: don't list a suggested feature that's already part of the plan (the yoga run listed the teacher roster twice).
